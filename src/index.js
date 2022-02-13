@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const path = require("path");
 const connectDB = require("./db/db.js");
 const logger = require("./middlewares/logger");
+const articleRouter = require("./routers/articles");
+
 // dotenv config.
 dotenv.config({ path: path.resolve(__dirname, "./config/config.env") });
 
@@ -15,7 +17,12 @@ const app = express();
 app.use(express.json());
 
 // development logger.
-app.use(logger);
+if (process.env.NODE_ENV === "development") {
+  app.use(logger);
+}
+
+// mont routers
+app.use("/api/articles", articleRouter);
 
 // setup server
 const PORT = process.env.PORT || 3000;
