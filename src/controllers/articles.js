@@ -1,4 +1,5 @@
 const Article = require("../models/article");
+const ErrorResponse = require("../utils/errorResponse");
 
 // @desc     Create new article.
 // @router   POST /api/articles
@@ -10,10 +11,7 @@ exports.createArticle = async (req, res, next) => {
       data: article,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -28,10 +26,7 @@ exports.getArticles = async (req, res, next) => {
       data: articles,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -42,17 +37,15 @@ exports.getSingleArticle = async (req, res, next) => {
     const article = await Article.findById(req.params.id);
 
     if (!article) {
-      return res.status(404).json({ success: false, data: null });
+      return next(new ErrorResponse("Article not found", 404));
     }
+
     res.status(200).json({
       success: true,
       data: article,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -64,7 +57,7 @@ exports.updateArticle = async (req, res, next) => {
     const article = await Article.findById(req.params.id);
 
     if (!article) {
-      return res.status(404).json({ success: false, data: null });
+      return next(new ErrorResponse("Article not found", 404));
     }
 
     updates.forEach((update) => {
@@ -78,10 +71,7 @@ exports.updateArticle = async (req, res, next) => {
       data: article,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -92,7 +82,7 @@ exports.deleteArticle = async (req, res, next) => {
     const article = await Article.findByIdAndDelete(req.params.id);
 
     if (!article) {
-      return res.status(404).json({ success: false, data: null });
+      return next(new ErrorResponse("Article not found", 404));
     }
 
     res.status(200).json({
@@ -100,9 +90,6 @@ exports.deleteArticle = async (req, res, next) => {
       data: article,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      data: null,
-    });
+    next(error);
   }
 };
